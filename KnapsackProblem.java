@@ -3,96 +3,162 @@ import java.util.List;
 import java.util.Scanner; 
 
 public class KnapsackProblem {
+
+    public static int capacity;
     public static void main(String[] args){
         //get data
-        List<String> items = getData();
+        List<Item> items = getData();
 
         //sort data by utility and weight
-        List<String> orderedItems = sortData(items);
+        List<Item> orderedItems = sortData(items);
 
         //Get max of values for the backpack capacity
-        List<String> result = useBackback(Integer.parseInt(items.get(items.size() - 1)), orderedItems);
+        List<Item> result = useBackback(orderedItems);
 
         //Print result
-        for(String x: result){
-            System.out.println(x);
+        for(Item x: result){
+            System.out.println(x.getIndex() + " " + x.getUsed());
         }
     }
 
-    public static List<String> getData(){
+    public static List<Item> getData(){
         Scanner scanner = new Scanner(System.in);
         boolean newValues = true;
-        List<String> items = new ArrayList<String>();
+        List<Item> items = new ArrayList<Item>();
+        int index = 0;
 
         while(newValues){
             String item = scanner.nextLine();  // Read user input
             if(item.equals("-1 -1 -1")){
                 newValues = false;
             }else{
-                items.add(item); 
+                item = item.strip();
+                String[] itemList = item.split(" ");
+                int utility = Integer.parseInt(itemList[0]);
+                int weight = Integer.parseInt(itemList[1]);
+                int amount = Integer.parseInt(itemList[2]);
+                float importance = (float) utility/weight; 
+                Item newItem = new Item(utility, weight, amount, importance, index);
+                items.add(newItem); 
+                index++;
             }
         }
-        String item = scanner.nextLine(); //Get backpack total capacity  
-        items.add(item);
+        capacity = scanner.nextInt();
 
         scanner.close();
         return items;
-    } 
+    }
 
-    public static List<String> sortData(List<String> items){
-        int n = items.size();
-
-        for(int i = 0; i < n-1; i++){
-            int ind_max = i;
-            for(int j = i+1; j < n - 1; j++){
-                float currentItem = calculateImportance(items.get(j));
-                float maxItem = calculateImportance(items.get(ind_max));
-                if(currentItem > maxItem){
-                    ind_max = j;
+    public static List<Item> sortData(List<Item> items){
+        int j, i, pos_ult_inv, lim_dir, n = items.size();
+        lim_dir = n;
+        for (j = 0; j < n; j++) {
+            pos_ult_inv = 0;
+            for (i = 1; i < lim_dir; i++){
+                if (items.get(i - 1).getImportance() < items.get(i).getImportance()) {
+                    Item aux = items.get(i - 1);
+                    items.set(i - 1, items.get(i));
+                    items.set(i, aux);
+                    pos_ult_inv = i;
                 }
             }
-
-            String aux = items.get(i);
-            items.set(i, items.get(ind_max));
-            items.set(ind_max, aux);
+            lim_dir = pos_ult_inv;
         }
 
         return items;
     }
 
-    public static float calculateImportance(String item){
-        String[] itemList = item.split(" ");
-        int use = Integer.parseInt(itemList[0]);
-        int weight = Integer.parseInt(itemList[1]);
-        float result = use/weight;
-        System.out.println(result);
-        return result;
-    }
-
-    public static List<String> useBackback(int capacity, List<String> items){
-        List<String> result = new ArrayList<String>();
-        boolean full = false;
-        int used = 0;
-        for(int i = 0; i < items.size() - 1; i++){
-            String[] itemList = items.get(i).split(" ");
-            int weight = Integer.parseInt(itemList[1]);
-            int amount = Integer.parseInt(itemList[2]);
+    public static List<Item> useBackback(List<Item> items){
+        List<Item> result = new ArrayList<Item>();
+        int weightUsed = 0;
+        for(int i = 0; i < items.size(); i++){
+            Item item = items.get(i);
             int itemUsed = 0;
-            for(int j = 1; j == amount; j++){
-                boolean compared = used + weight > capacity;
+
+            for(int j = 1; j <= item.getAmount(); j++){
+                boolean compared = weightUsed + item.getWeight() <= capacity;
                 if(compared){
-                    full = true;
-                    break;
-                }else{
-                    used =+ weight;
+                    weightUsed = weightUsed + item.getWeight();
                     itemUsed++;
                 }
             }
-            result.add(String.valueOf(itemUsed));
-            if(full){
-                break;
+            if(itemUsed != 0){
+                item.setUsed(itemUsed);
+                result.add(item);
             }
         }
         return result;
     }
+}
+
+class Item{
+
+    int utility;
+
+    int weight;
+
+    int amount;
+
+    float importance;
+
+    int index;
+
+    int used;
+
+    public Item(int utility, int weight, int amount, float importance, int index){
+        this.utility = utility;
+        this.weight = weight;
+        this.amount = amount;
+        this.importance = importance;
+        this.index = index;
+    }
+
+    public int getUtility() {
+        return utility;
+    }
+
+    public void setUtility(int utility) {
+        this.utility = utility;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public float getImportance() {
+        return importance;
+    }
+
+    public void setImportance(float importance) {
+        this.importance = importance;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public int getUsed() {
+        return used;
+    }
+
+    public void setUsed(int used) {
+        this.used = used;
+    }
+
 }
