@@ -7,7 +7,6 @@ public class LinkedList{
     public LinkedList(){
         this.head = null;
         this.size = 0;
-
     }
 
     public static void main(String[] args){
@@ -17,13 +16,18 @@ public class LinkedList{
         }
         linked.print();
 
+        for(int i = 18; i > 10; i = i -2){
+            linked.remove(i);
+        }
+
+        linked.print();
 
     }
 
     public Node find(int x){
         Node pivot = this.head;
-        while (pivot != null && pivot.getValue() != x){
-            pivot = pivot.getNext();
+        while (pivot != null && pivot.value != x){
+            pivot = pivot.next;
         }
 
         return pivot;
@@ -32,42 +36,34 @@ public class LinkedList{
     public void insert(int position, int new_elem){
         Node new_node = new Node(new_elem);
 
-        if(this.size == 0){
+        if(this.head == null){
             this.head = new_node;
         }else{
-            Node pivot = this.head;
             if(position == 0){
-                new_node.setNext(this.head);
+                new_node.next = this.head;
                 this.head = new_node;
             }else{
-                for(int i = 0; i < position; i++){
-                    pivot = pivot.getNext();
+                Node pivot = this.head;
+                for(int i = 0; i < position -1; i++){
+                    pivot = pivot.next;
                 }
-                insert(pivot, new_node);
+                new_node.next = pivot.next;
+                pivot.next = new_node;
             }
         }
         this.size++;
 
     }
 
-    public void insert(Node p, Node new_elem){
-        if(p.getNext() == null){
-            new_elem.setNext();
-        }else{
-            new_elem.setNext(p.getNext());
-        }
-        p.setNext(new_elem);
-    }
-
     public void empty(){
-        this.head.setNext(null);
+        this.head.next = null;
     }
 
     public void print(){
         Node pivot = this.head;
         while(pivot != null){
-            System.out.println(pivot.getValue() + " \n");
-            pivot = pivot.getNext();
+            System.out.println(pivot.value + " \n");
+            pivot = pivot.next;
         }
         
     }
@@ -77,18 +73,15 @@ public class LinkedList{
             return;
         }
 
-        Node to_remove = null;
-        if(this.head.getValue() == value){
-            to_remove = this.head;
-            this.head = this.head.getNext();
+        if(this.head.value == value){
+            this.head = this.head.next;
         }else{
             Node pivot = head;
-            while(pivot.getNext() != null && pivot.getNext().getValue() != value){
-                pivot = pivot.getNext();
+            while(pivot.next != null && pivot.next.value != value){
+                pivot = pivot.next;
             }
-            to_remove = pivot.getNext();
-            if(pivot.getNext() != null){
-                pivot.setNext(pivot.getNext().getNext());
+            if(pivot.next != null){
+                pivot.next = pivot.next.next;
             }
 
         }
@@ -121,25 +114,6 @@ class Node{
         this.next = next;
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public Node getNext() {
-        return next;
-    }
-
-    public void setNext(Node next) {
-        this.next = next;
-    }
-
-    public void setNext() {
-        this.next = null;
-    }
 }
 
 
