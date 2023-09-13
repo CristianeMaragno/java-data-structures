@@ -4,12 +4,13 @@ public class TravellingSalesman<E> {
 
     public static void main(String[] args){
         CircleLinkedList list = getData();
-         float firstResult = calcTotalDistance(list);
+        float firstResult = calcTotalDistance(list);
         CircleLinkedList orderedList = orderList(list);
-        float EndResult = calcTotalDistance(orderedList);
+        float endResult = calcTotalDistance(orderedList);
 
-        System.out.println(firstResult);
-        System.out.println(EndResult);
+        System.out.printf(java.util.Locale.US, "%.2f", firstResult);
+        System.out.println("");
+        System.out.printf(java.util.Locale.US, "%.2f", endResult);
     }
 
     public static CircleLinkedList getData(){
@@ -38,16 +39,11 @@ public class TravellingSalesman<E> {
     }
 
     public static float calcTotalDistance(CircleLinkedList items){
-        System.out.println("Calc on total");
         int size = items.size();
         float result = 0;
         for(int i = 0; i < size; i++){
             Point first = (Point) items.findByIndex(i);
             Point second = (Point) items.findByIndex(i + 1);
-            System.out.println("X " + first.x);
-            System.out.println("Y " + first.y);
-            System.out.println("X2 " + second.x);
-            System.out.println("Y2 " + second.y);
             float calculated = calcDistance(first, second);
             result = result + calculated;
         }
@@ -57,20 +53,28 @@ public class TravellingSalesman<E> {
     public static CircleLinkedList orderList(CircleLinkedList items){
         int size = items.size();
         boolean continueLoop = true;
-        System.out.println("Order list");
         while(continueLoop){
             continueLoop = false;
-            for(int i = 0; i < size; i++){
+            for(int i = 0; i < size - 1; i++){
                 Point reference = (Point) items.findByIndex(i);
                 Point first = (Point) items.findByIndex(i + 1);
                 Point second = (Point) items.findByIndex(i + 2);
+
+                Point originalReference = (Point) items.findByIndex(i);
+                Point originalPrevious = (Point) items.findByIndex(i - 1);
+
+                System.out.println(i);
                 System.out.println("X " + reference.x);
                 System.out.println("Y " + reference.y);
+                System.out.println("X2 " + first.x);
+                System.out.println("Y2 " + first.y);
+                System.out.println("X3 " + second.x);
+                System.out.println("Y3 " + second.y);
 
                 float distanceFirst = calcDistance(reference, first);
                 float distanceSecond = calcDistance(reference, second);
                 if(distanceFirst > distanceSecond){
-                    System.out.println("Swap");
+                    System.out.println("SWAP");
                     items.swap(reference);
                     continueLoop = true;
                 }
@@ -128,7 +132,7 @@ class CircleLinkedList<E>{
             pivot = pivot.next;
         }
 
-        return pivot.next.value;
+        return pivot.value;
     }
 
     public void insert(int position, E new_elem){
@@ -156,9 +160,10 @@ class CircleLinkedList<E>{
     public void swap(E value){
         Node<E> node = find(value);
         Node<E> nodeToSwap = node.next;
-        node.next = nodeToSwap.next.next;
-        nodeToSwap.next.next = nodeToSwap;
-        nodeToSwap.next = nodeToSwap.next.next;
+        Node<E> secondNodeToSwap = node.next.next;
+        node.next = secondNodeToSwap;
+        nodeToSwap.next = secondNodeToSwap.next;
+        secondNodeToSwap.next = nodeToSwap;
     }
 
     public void empty(){

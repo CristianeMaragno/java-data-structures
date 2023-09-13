@@ -67,10 +67,10 @@ class CircleLinkedList<E>{
     public void swap(E value){
         Node<E> node = find(value);
         Node<E> nodeToSwap = node.next;
-        Node<E> secondNodeToSwap = nodeToSwap.next;
+        Node<E> secondNodeToSwap = node.next.next;
         node.next = secondNodeToSwap;
-        secondNodeToSwap.next = nodeToSwap;
         nodeToSwap.next = secondNodeToSwap.next;
+        secondNodeToSwap.next = nodeToSwap;
     }
 
     public void empty(){
