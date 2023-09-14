@@ -55,27 +55,17 @@ public class TravellingSalesman<E> {
         boolean continueLoop = true;
         while(continueLoop){
             continueLoop = false;
-            for(int i = 0; i < size - 1; i++){
-                Point reference = (Point) items.findByIndex(i);
-                Point first = (Point) items.findByIndex(i + 1);
-                Point second = (Point) items.findByIndex(i + 2);
+            for(int i = 0; i < size; i++){
+                Point index = (Point) items.findByIndex(i);
+                Point previous = (Point) items.findByIndex(i - 1);
+                Point next = (Point) items.findByIndex(i + 1);
+                Point nextNext = (Point) items.findByIndex(i + 2);
 
-                Point originalReference = (Point) items.findByIndex(i);
-                Point originalPrevious = (Point) items.findByIndex(i - 1);
+                float originalDistance = calcDistance(previous, index) + calcDistance(next, nextNext);
+                float testDistance = calcDistance(previous, next) + calcDistance(index, nextNext);
 
-                System.out.println(i);
-                System.out.println("X " + reference.x);
-                System.out.println("Y " + reference.y);
-                System.out.println("X2 " + first.x);
-                System.out.println("Y2 " + first.y);
-                System.out.println("X3 " + second.x);
-                System.out.println("Y3 " + second.y);
-
-                float distanceFirst = calcDistance(reference, first);
-                float distanceSecond = calcDistance(reference, second);
-                if(distanceFirst > distanceSecond){
-                    System.out.println("SWAP");
-                    items.swap(reference);
+                if(originalDistance > testDistance){
+                    items.swap(previous);
                     continueLoop = true;
                 }
             }
@@ -85,7 +75,6 @@ public class TravellingSalesman<E> {
 
     public static float calcDistance(Point first, Point second){
         float result = (float) Math.sqrt((Math.pow((first.x - second.x), 2) + Math.pow((first.y - second.y), 2)));
-        System.out.println("distance " + result);
         return result;
     }
     
@@ -128,6 +117,10 @@ class CircleLinkedList<E>{
     public E findByIndex(int position){
         Node<E> pivot = this.head;
 
+        if(position < 0){
+            position = size + position;
+        }
+
         for(int i = 0; i < position; i++){
             pivot = pivot.next;
         }
@@ -164,6 +157,9 @@ class CircleLinkedList<E>{
         node.next = secondNodeToSwap;
         nodeToSwap.next = secondNodeToSwap.next;
         secondNodeToSwap.next = nodeToSwap;
+        if(nodeToSwap == this.head){
+            this.head = secondNodeToSwap; 
+        }
     }
 
     public void empty(){

@@ -35,6 +35,10 @@ class CircleLinkedList<E>{
     public E findByIndex(int position){
         Node<E> pivot = this.head;
 
+        if(position < 0){
+            position = size + position;
+        }
+
         for(int i = 0; i < position; i++){
             pivot = pivot.next;
         }
@@ -71,6 +75,10 @@ class CircleLinkedList<E>{
         node.next = secondNodeToSwap;
         nodeToSwap.next = secondNodeToSwap.next;
         secondNodeToSwap.next = nodeToSwap;
+
+        if(nodeToSwap == this.head){
+            this.head = secondNodeToSwap; 
+        }
     }
 
     public void empty(){
