@@ -9,12 +9,6 @@ public class BiggestIsland {
         //get data
         List<List<Integer>> map = getData();
 
-        /*for (int i = 0; i < map.size(); i++) {
-            for (int j = 0; j < map.get(i).size(); j++) {
-                System.out.println(map.get(i).get(j));
-            }
-        }*/
-
         //proccess data
         int result = findBiggestIsland(map);
 
@@ -28,7 +22,7 @@ public class BiggestIsland {
         boolean continueLoop = true;
         while(continueLoop){
             String item = scanner.nextLine();  // Read user input
-            if(item.equals("-1")){
+            if(item.isEmpty()){
                 continueLoop = false;
             }else{
                 item = item.strip();
@@ -49,33 +43,48 @@ public class BiggestIsland {
         LinkedStack stack = new LinkedStack<>();
         int result = 0;
         for (int i = 0; i < map.size(); i++) {
-            int count = 0;
             for (int j = 0; j < map.get(i).size(); j++) {
                 if(map.get(i).get(j) == 1){
+                    int count = 0;
+                    int width = map.get(i).size();
                     map.get(i).set(j, -1);
                     count++;
-                    stack.push(new Point(i, j+1));
-                    stack.push(new Point(i, j-1)); //Problem with out of bounds
-                    stack.push(new Point(i+1, j));
-                    stack.push(new Point(i-1, j));
+                    if(j+1 < width && map.get(i).get(j+1) == 1){ //Problem with out of bounds //x ou i funciona comparar com size
+                        stack.push(new Point(i, j+1));
+                    }
+                    if(j-1 >= 0 && map.get(i).get(j-1) == 1){
+                        stack.push(new Point(i, j-1));
+                    }
+                    if(i+1 < map.size() && map.get(i+1).get(j) == 1){
+                        stack.push(new Point(i+1, j));
+                    }
+                    if(i-1 >= 0 && map.get(i-1).get(j) == 1){
+                        stack.push(new Point(i-1, j));
+                    }
                     while(!stack.empty()){
                         Point point = (Point) stack.top();
-                        if(map.get(point.x).get(point.y) == 1){
+                        stack.pop();
+                        if(map.get(point.x).get(point.y) == 1){ //not needed?
                             count++;
                             map.get(point.x).set(point.y, -1);
-                            stack.push(new Point(i, j+1));
-                            stack.push(new Point(i, j-1)); //Problem with out of bounds
-                            stack.push(new Point(i+1, j));
-                            stack.push(new Point(i-1, j));
+                            if(point.y+1 < width && map.get(point.x).get(point.y+1) == 1){
+                                stack.push(new Point(point.x, point.y+1));
+                            }
+                            if(point.y-1 >= 0 && map.get(point.x).get(point.y-1) == 1){
+                                stack.push(new Point(point.x, point.y-1));
+                            }
+                            if(point.x+1 < map.size() && map.get(point.x+1).get(point.y) == 1){
+                                stack.push(new Point(point.x+1, point.y));
+                            }
+                            if(point.x-1 >= 0 && map.get(point.x-1).get(point.y) == 1){
+                                stack.push(new Point(point.x-1, point.y));
+                            }
                         }
-                        stack.pop();
                     }
-
                     if(count > result){
                         result = count;
                     }
                 }
-                //System.out.println(map.get(i).get(j));
             }
         }
 

@@ -10,6 +10,9 @@ public class LinkedStack<E> {
         stack.pop();
         stack.pop();
         stack.print();
+        System.out.println(stack.top());
+        stack.push(42);
+        System.out.println(stack.top());
     }
 
     LinkedStack(){
